@@ -1,0 +1,128 @@
+[inversion]
+	{inv_params}
+		top_patch_width = 1e3
+ 	 	 top_patch_length = 0.9e3
+ 	 	 patch_increment_factor = 1.3
+ 	 	 strike_slip = 1
+ 	 	 dip_slip = 1
+ 	 	 normal_slip = 0
+ 
+ 	 	 positivity_strike = -1
+ 	 	 positivity_dip = 0
+ 	 	 positivity_normal = 0
+ 	 	 positivity_max = 1000
+ 	 	 bottom_zero_constraint = 0
+ 	 	
+ 	 	
+ 	 	 smooth_factor = 0.08
+ 	 	 smooth_between_segments = 1
+ 		 smooth_dip_over_strike = 2
+ 	        
+ 	 	
+ 	 	 weight_phase = 1
+ 	 	 weight_azi = 0.6
+ 	 	 weight_gps = 0.3
+ 	 	 weight_gov = 0.02
+
+		 remove_ramp = 1
+ 		 consider_topography = 0
+		 switch_phase = -1
+ 
+[data]
+	{data_params}
+ 		 num_des_sources = 1
+ 		 num_asc_sources = 1
+ 
+ 		 num_azi_sources = 1
+ 		 phi1 = 195
+ 
+ 		 num_gps_sources = 1
+ 		 gps1h = 1
+ 		 gps1v = 1
+ 
+ 		 num_gov_sources = 1
+
+	{data_files}
+ 		 des1 = Hector_Des.lltnde
+ 		 asc1 = Hector_Asc.lltnde
+ 
+ 		 azi1 = Hector_Azi.llde
+ 
+ 		 gps1 = Hector_gps.lldet
+ 
+ 		 gov1 = Hector_gov.lldeat
+
+[model]
+	{model_params}
+         num_of_sources = 6
+ 		 poisson_ratio = 0.25
+ 
+	{origin}
+ 		 xo = -116.27
+ 		 yo = 34.595
+	{trace1}
+         x = -8.9228e+03
+         y = 1.0405e+04
+         z = 0
+       len = 7.1763e+03
+       wid = 20000
+       dip = 91
+    strike = 162.1526
+ 	{trace2}
+ 		 x = -3.7779e+03
+         y = 1.7895e+03
+         z = 0
+       len = 1.3226e+04
+       wid = 20000
+       dip = 89
+    strike = 142.2871
+ 	{trace3}
+ 		 x = -483.6976
+         y = 250.2423
+         z = 0
+       len = 2.7420e+04
+       wid = 20000
+       dip = 92
+    strike = 169.1682
+ 	{trace4}
+ 		 x = 3.2641e+03
+         y = -1.5440e+04
+         z = 0
+       len = 4.9849e+03
+       wid = 20000
+       dip = 91
+    strike = 152.9223
+ 	{trace5}
+ 		 x = 8.5830e+03
+         y = -2.2735e+04
+         z = 0
+       len = 1.3157e+04
+       wid = 20000
+       dip = 92
+    strike = 140.5033
+    {trace6}
+         x = 6.2576e+03
+         y = -1.7877e+04
+         z = 0
+       len = 9.5552e+03
+       wid = 20000
+       dip = 92
+    strike = 134.3956
+	{smooth}
+		num_seg_smooth = 3
+		smo1 = 1 2
+		smo2 = 3 4
+        smo3 = 4 5
+		num_inter_smooth = 2
+		smoi1 = 2 3 2
+        smoi2 = 6 4 1
+
+    {edge_constraints}
+        bot = 0
+        side = 0
+        num_side = 0
+        side1 = 1 1 0
+        side2 = 3 1 0
+        side3 = 5 0 1
+        side4 = 6 0 1
+
