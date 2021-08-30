@@ -74,8 +74,11 @@ function [sp,dp] = plot_patches(str,mode,ratio)
     dp = sp;
     for j = 1:1:max(a(:,3))
         ii = find(a(:,3) == j);
-        sp(j) = abs(a(ii,11))'*L(ii)/100/1000;      % strike slip
-        %sp(j) = abs(a(ii,12))'*L(ii)/100/1000;      % dip slip
+        if mode == 1 || mode == 13
+            sp(j) = abs(a(ii,11))'*L(ii)/100/1000;      % strike slip
+        else
+            sp(j) = abs(a(ii,12))'*L(ii)/100/1000;      % dip slip
+        end
         dp(j) = mean(zs(ii)-W(ii).*sin(dip(ii))/2)/1000;
     end
     plot(sp,dp,'b-s','LineWidth',2,'MarkerSize',10);

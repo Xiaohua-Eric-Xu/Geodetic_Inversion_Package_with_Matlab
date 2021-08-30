@@ -2,15 +2,19 @@
     close all
     
 % path to where the data and initial model are:
-    earthquake = 'xxxxxxxx';
-    input_path = ['xxxxxxxx',earthquake,'/input/'];
-    model_path = ['xxxxxxxx',earthquake,'/model/'];
-
+    earthquake = 'new/Nepal';
+    %earthquake = 'new/Maule';
+    input_path = ['/Users/xix016/Documents/Inversion/',earthquake,'/input/'];
+    model_path = ['/Users/xix016/Documents/Inversion/',earthquake,'/model/'];
+%    earthquake = 'Hector_corse';
+%    input_path = ['/Users/xix016/Documents/InSAR_Data/Inversion/stress_driven_corse/',earthquake,'/input/'];
+%    model_path = ['/Users/xix016/Documents/InSAR_Data/Inversion/stress_driven_corse/',earthquake,'/model/'];
+    
 % set the imput config file name under the model path
     config_inv = 'config.inv';
 
 % adding search path for the inversion package
-    addpath 'xxxxxxxx';
+    addpath /Users/xix016/Documents/Inversion/Inversion
 
 % go to the model path to load the parameters and create inversion model
     gotodir=['cd ' model_path];
@@ -120,7 +124,7 @@
         for j = 1:1:num_des
             dat = load ([input_path cell2mat(inifile(config_inv,'read',{'data','data_files',['des' num2str(j)],'s'}))]);
             [xx,yy] = utm2ll(dat(:,1)-X0+3,dat(:,2),0,1);
-            dat(:,7) = dat(:,7)/10;
+            dat(:,7) = dat(:,7);
             %xx = xx - xo;
             yy = yy - yo;
             xP = [xP;xx];
@@ -143,7 +147,7 @@
         for j = 1:1:num_asc
             dat = load ([input_path cell2mat(inifile(config_inv,'read',{'data','data_files',['asc' num2str(j)],'s'}))]);
             [xx,yy] = utm2ll(dat(:,1)-X0+3,dat(:,2),0,1);
-            dat(:,7) = dat(:,7)/10;
+            dat(:,7) = dat(:,7);
             %xx = xx - xo;
             yy = yy - yo;
             xP = [xP;xx];             % longitude
@@ -215,7 +219,11 @@
                 sG = [sG;dat(:,8)/10];
                 if TP~=0 tpG = [tpG;dat(:,9)]; else tpG = [tpG;dat(:,9)*0]; end
             end
-
+            %{
+            gpsE = [gpsE;dat(:,3)];
+            gpsN = [gpsN;dat(:,4)];
+            gpsU = [gpsU;dat(:,5)];
+            %}
             quiver(xx,yy,dat(:,3)/10,dat(:,4)/10,'r');
             quiver(xx,yy,dat(:,5)*0,dat(:,5)/10,'b');
         end
@@ -246,7 +254,11 @@
     %sP = sqrt(sqrt(sP));
 %% generate the patch model for inversion
     XS=[]; YS=[]; ZS=[]; XB=[]; YB=[]; ZB=[]; LL=[]; WW=[]; DIP=[]; STRIKE=[]; num_grid=[];
-
+    %{
+    for j = 1:1:6
+        patch(j).wid = 7000;
+    end
+    %}
     figure
     for j = 1:1:num_sorc
         [xs,ys,zs,xb,yb,zb,ll,ww] = generate_grid(1, patch(j), dw, dl, inc, 1);
@@ -305,6 +317,19 @@
     end
     
 %%% prepare the observation vector for inversion
+    % weighing inside each dataset while weighing between datasets
+    % Hector_corse 
+    % AW = 0.4; GW = 0.3; OW = 0;
+    % SF = 0.12;
+    % Landers
+    % AW = 0.3; GW = 0.45; OW = 0.08;
+    % SF = 0.2;
+    % SF = 0.13;
+    % SF = 0.17;
+    % SF = 0.07;
+    %GW = 0.1;
+    %SF = 4;
+    %SF = 0.05;
     D = []; W = [];
     if num_des+num_asc ~= 0 && PW ~= 0
         nP = mean(sP);
@@ -347,11 +372,16 @@
         W = [W; sOO*0];
     end
 
+    % some edits to the data
+    %load ii;
+    %D(ii) = 0;
+    %Greens(ii,:) = 0;
+        
     D_all = W.*D;
-    
+    %Smooth = [Smooth;diag(ones(sum(num_grid)*2,1))/mean(LL)/3];
 % inversion    
 %%% prepare the Green's matrix for inversion
-    %SF = 1;
+    
     Green_all = [Greens rmp; Smooth/mean(max(Smooth,[],2))*SF/size(Smooth,1) zeros(size(Smooth,1),size(rmp,2))];
     for j = 1:1:length(W)
         Green_all(j,:) = Green_all(j,:)*W(j);
@@ -365,6 +395,8 @@
         lb(1:sum(fault_type):end-size(rmp,2)) = 0;
     elseif PSC < 0
         ub(1:sum(fault_type):end-size(rmp,2)) = 0;
+        %ub(sum(fault_type)*269+1:sum(fault_type):sum(fault_type)*334+1) = PMAX;
+        %lb(sum(fault_type)*269+1:sum(fault_type):sum(fault_type)*334+1) = 0;
     end
     if PDC > 0
         lb(2:sum(fault_type):end-size(rmp,2)) = 0;
@@ -372,7 +404,7 @@
         ub(2:sum(fault_type):end-size(rmp,2)) = 0;
     end
 
-    options = optimset('LargeScale','on','DiffMaxChange',1e-3,'DiffMinChange',1e-9,'TolCon',1e-9,'TolFun',1e-9,'TolPCG',1e-9,'TolX',1e-9,'MaxIter',1e9,'MaxPCGIter',1e9);
+    options = optimset('LargeScale','on','DiffMaxChange',1e-9,'DiffMinChange',1e-9,'TolCon',1e-9,'TolFun',1e-9,'TolPCG',1e-9,'TolX',1e-9,'MaxIter',1e9,'MaxPCGIter',1e9);
     [U,resnorm,residual,exitflag] = lsqlin(Green_all,D_all,[],[],[],[],lb,ub);
     if RMP == 1
         rmp0 = rmp;
@@ -419,7 +451,6 @@
     
     mu = 30e9;
  %{   
-    % may list as a function as in Maule
     dp_list = ZS;%-WW.*sind(DIP);
     mu_list = dp_list*0;
     mu_list(dp_list>-5e3) = 21.4e9;
@@ -437,7 +468,17 @@
     str = ['seismic moment magnitude:', num2str(m)];
     disp(str);
     
-    plot_patches('slip.inv',13,8);
+    plot_patches('slip.inv',23,8);
+    %2/3*log10(mu*(sqrt(sum(Ud/100.*LL.*WW)^2)))-6.07
+    %2/3*log10(mu*(sqrt(sum(Us/100.*LL.*WW)^2)))-6.07
+    %hold on,plot(0,0,'ks','MarkerSize',10)
     
     %plot_res(Greens,rmp,U,D,Urmp0,rmp0,dat_ph,dat_az,dat_gps,dat_gov,xP,yP,xA,yA,xG,yG,xOO,yOO,0,11,xo,yo);
     
+    %x2 = sum((([Greens rmp]*U + rmp0*Urmp0 - D)./[sP/length(sG)*nG/2;sA;sG/length(sG)*nG;sOO]).^2)/length(D);
+    %disp(['X2=',num2str(x2)])
+
+
+
+
+
