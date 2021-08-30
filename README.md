@@ -1,1 +1,1 @@
-# Geodetic_Inversion_Package_with_Matlab
+# Geodetic Inversion Package with MATLAB
