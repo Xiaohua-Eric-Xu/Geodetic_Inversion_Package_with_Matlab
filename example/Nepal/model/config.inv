@@ -1,0 +1,89 @@
+[inversion]
+	{inv_params}
+		top_patch_width = 10e3
+		top_patch_length = 10e3
+		patch_increment_factor = 1.05
+		strike_slip = 1
+		dip_slip = 1
+		normal_slip = 0
+ 
+		positivity_strike = 0
+		positivity_dip = 1
+		positivity_normal = 0
+		positivity_max = 3000
+		bottom_zero_constraint = 0
+ 	 	
+ 	 	
+		smooth_factor = 0.12
+		smooth_between_segments = 0
+		smooth_dip_over_strike = 1
+ 	        
+ 	 	
+		weight_phase = 1
+		weight_azi = 0
+		weight_gps = 0.1
+		weight_gov = 0
+
+		remove_ramp = 1
+		consider_topography = 0
+		switch_phase = 1
+ 
+[data]
+	{data_params}
+		num_des_sources = 2
+		num_asc_sources = 1
+ 		
+		num_azi_sources = 0
+		phi1 = 346
+		phi2 = 346
+ 
+		num_gps_sources = 1
+		gps1h = 1
+		gps1v = 1
+ 
+		num_gov_sources = 0
+
+	{data_files}
+		des1 = nepal_des_t047.lltnde
+        des2 = nepal_des_t048.lltnde
+        asc1 = nepal_asc.lltnde
+
+		azi1 = 
+		azi2 = 
+ 
+		gps1 = gps.lldet
+ 
+		gov1 =
+
+[model]
+	{model_params}
+        num_of_sources = 1
+		poisson_ratio = 0.25
+ 
+	{origin}
+		xo = 84.708
+		yo = 28.147
+    
+    {trace1}
+	 	x= 1.8125e+04
+        y= -9.7964e+04
+        z= 0
+        len= 2.60000e+05
+        wid= 150000
+        dip= 7
+        strike= -71.4804
+
+	{smooth}
+		num_seg_smooth = 0
+		smo1 = 0 0
+		num_inter_smooth = 0
+		smoi = 0 0
+
+
+    {edge_constraints}
+        bot = 0
+        side = 0
+        top = 0
+        num_side = 1
+        side1 = 1 1 1
+
