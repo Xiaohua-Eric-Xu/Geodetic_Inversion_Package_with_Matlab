@@ -215,11 +215,7 @@
                 sG = [sG;dat(:,8)/10];
                 if TP~=0 tpG = [tpG;dat(:,9)]; else tpG = [tpG;dat(:,9)*0]; end
             end
-            %{
-            gpsE = [gpsE;dat(:,3)];
-            gpsN = [gpsN;dat(:,4)];
-            gpsU = [gpsU;dat(:,5)];
-            %}
+
             quiver(xx,yy,dat(:,3)/10,dat(:,4)/10,'r');
             quiver(xx,yy,dat(:,5)*0,dat(:,5)/10,'b');
         end
@@ -250,11 +246,7 @@
     %sP = sqrt(sqrt(sP));
 %% generate the patch model for inversion
     XS=[]; YS=[]; ZS=[]; XB=[]; YB=[]; ZB=[]; LL=[]; WW=[]; DIP=[]; STRIKE=[]; num_grid=[];
-    %{
-    for j = 1:1:6
-        patch(j).wid = 7000;
-    end
-    %}
+
     figure
     for j = 1:1:num_sorc
         [xs,ys,zs,xb,yb,zb,ll,ww] = generate_grid(1, patch(j), dw, dl, inc, 1);
@@ -373,8 +365,6 @@
         lb(1:sum(fault_type):end-size(rmp,2)) = 0;
     elseif PSC < 0
         ub(1:sum(fault_type):end-size(rmp,2)) = 0;
-        %ub(sum(fault_type)*269+1:sum(fault_type):sum(fault_type)*334+1) = PMAX;
-        %lb(sum(fault_type)*269+1:sum(fault_type):sum(fault_type)*334+1) = 0;
     end
     if PDC > 0
         lb(2:sum(fault_type):end-size(rmp,2)) = 0;
@@ -429,6 +419,7 @@
     
     mu = 30e9;
  %{   
+    % may list as a function as in Maule
     dp_list = ZS;%-WW.*sind(DIP);
     mu_list = dp_list*0;
     mu_list(dp_list>-5e3) = 21.4e9;
@@ -447,16 +438,6 @@
     disp(str);
     
     plot_patches('slip.inv',13,8);
-    %2/3*log10(mu*(sqrt(sum(Ud/100.*LL.*WW)^2)))-6.07
-    %2/3*log10(mu*(sqrt(sum(Us/100.*LL.*WW)^2)))-6.07
-    %hold on,plot(0,0,'ks','MarkerSize',10)
     
     %plot_res(Greens,rmp,U,D,Urmp0,rmp0,dat_ph,dat_az,dat_gps,dat_gov,xP,yP,xA,yA,xG,yG,xOO,yOO,0,11,xo,yo);
     
-    %x2 = sum((([Greens rmp]*U + rmp0*Urmp0 - D)./[sP/length(sG)*nG/2;sA;sG/length(sG)*nG;sOO]).^2)/length(D);
-    %disp(['X2=',num2str(x2)])
-
-
-
-
-
